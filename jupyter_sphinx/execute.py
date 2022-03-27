@@ -147,11 +147,14 @@ class ExecuteJupyterCells(SphinxTransform):
                 kernel_name = default_kernel
                 file_name = next(default_names)
 
-            notebook = execute_cells(
-                kernel_name,
-                [nbformat.v4.new_code_cell(node.astext()) for node in nodes],
-                self.config.jupyter_execute_kwargs,
-            )
+            import warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                notebook = execute_cells(
+                    kernel_name,
+                    [nbformat.v4.new_code_cell(node.astext() if not "execute" in node or node["execute"] else "") for node in nodes],
+                    self.config.jupyter_execute_kwargs,
+                )
 
             # Raise error if cells raised exceptions and were not marked as doing so
             for node, cell in zip(nodes, notebook.cells):
