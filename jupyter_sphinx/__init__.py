@@ -29,7 +29,7 @@ from .thebelab import ThebeButton, ThebeButtonNode, ThebeOutputNode, ThebeSource
 REQUIRE_URL_DEFAULT = (
     "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"
 )
-THEBELAB_URL_DEFAULT = "https://unpkg.com/thebelab@^0.4.0"
+THEBELAB_URL_DEFAULT = "https://unpkg.com/thebe@latest/lib/index.js"
 
 logger = logging.getLogger(__name__)
 
