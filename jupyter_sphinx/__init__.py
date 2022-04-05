@@ -168,7 +168,7 @@ def setup(app):
     app.add_config_value("jupyter_sphinx_embed_url", None, "html")
 
     # thebelab config, can be either a filename or a dict
-    app.add_config_value("jupyter_sphinx_thebelab_config", None, "html")
+    app.add_config_value("jupyter_sphinx_thebelab_config", None, "env")
     app.add_config_value("jupyter_sphinx_thebelab_url", THEBELAB_URL_DEFAULT, "html")
 
     # linenos config
@@ -271,7 +271,11 @@ def setup(app):
     app.add_role("jupyter-download:notebook", JupyterDownloadRole())
     app.add_role("jupyter-download:nb", JupyterDownloadRole())
     app.add_role("jupyter-download:script", JupyterDownloadRole())
-    app.add_transform(ExecuteJupyterCells)
+    if os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
+        from .execute import SageExecuteJupyterCells
+        app.add_transform(SageExecuteJupyterCells)
+    else:
+        app.add_transform(ExecuteJupyterCells)
     app.add_transform(CellOutputsToNodes)
 
     # For syntax highlighting

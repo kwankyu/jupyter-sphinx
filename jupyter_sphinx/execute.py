@@ -323,3 +323,36 @@ def setup(app):
     )
     out = jssetup(app)
     return out
+
+
+class SageExecuteJupyterCells(SphinxTransform):
+    """A cut-down ExecuteJupyterCells for building Sage documentation.
+
+    All JupyterCellNodes for code blocks in the Sage documentation have
+    `:hide-code:` and `:hide-output:` options. Hence no actual execution of
+    Jupyter notebooks is necessary. So this class mimics ExecuteJupyterCells
+    assuming empty inputs and outputs from Jupyter notebooks.
+    """
+    default_priority = 180
+
+    def apply(self):
+        doctree = self.document
+        thebe_config = self.config.jupyter_sphinx_thebelab_config
+
+        nodes = doctree.traverse(JupyterCellNode)
+
+        if not nodes:
+            return
+
+        if thebe_config:
+            # Add the button at the bottom if it is not present
+            if not doctree.traverse(ThebeButtonNode):
+                doctree.append(ThebeButtonNode())
+            add_thebelab_library(doctree, self.env)
+
+        for node in nodes:
+            source = node.children[0]
+            source.attributes["classes"].append("code_cell")
+            node.attributes["cm_language"] = 'sage'
+            node += CellOutputBundleNode([])
+
