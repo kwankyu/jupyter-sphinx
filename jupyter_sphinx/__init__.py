@@ -282,7 +282,8 @@ def setup(app):
     app.add_lexer("ipythontb", IPythonTracebackLexer)
     app.add_lexer("ipython", IPython3Lexer)
 
-    app.connect("builder-inited", builder_inited)
+    if not os.environ.get('SAGE_LIVE_DOC', 'no') == 'yes':
+        app.connect("builder-inited", builder_inited)
     app.connect("build-finished", build_finished)
 
     # add jupyter-sphinx and thebelab js and css
